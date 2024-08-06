@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>ws_taggrs</name>
+    <displayName><![CDATA[Taggrs Connector]]></displayName>
+    <version><![CDATA[1.0.1]]></version>
+    <description><![CDATA[Vult datalayer voor Taggrs]]></description>
+    <author><![CDATA[Johan van der Klis | De Websmid BV]]></author>
+    <tab><![CDATA[]]></tab>
+    <is_configurable>1</is_configurable>
+    <need_instance>0</need_instance>
+</module>
