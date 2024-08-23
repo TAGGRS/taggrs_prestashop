@@ -24,7 +24,7 @@ class OrderConfDataRetriever implements DataRetrieverInterface{
 		$idLang = $context->language->id;
 
 		$totalTax = (float)$baseOrder->total_paid_tax_incl - (float)$baseOrder->total_paid_tax_excl;
-		$orderCustomer = $context->smarty->tpl_vars['order_customer']->value;
+		$orderCustomer = ( empty($context->smarty->tpl_vars['order_customer']) ) ? $context->smarty->tpl_vars['customer']->value : $context->smarty->tpl_vars['order_customer']->value;
 
     	$hashedEmail = hash('sha256', strtolower(trim($orderCustomer['email'])));
     	$hashedPhone = hash('sha256', strtolower(trim($baseAddress->phone)));
