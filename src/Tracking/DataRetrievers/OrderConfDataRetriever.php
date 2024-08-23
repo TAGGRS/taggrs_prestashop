@@ -41,8 +41,8 @@ class OrderConfDataRetriever implements DataRetrieverInterface{
 			'currency' => $currency['iso_code'],
 			'transaction_id' => $baseOrder->reference,
 			'value' => (float)round((float)$baseOrder->total_paid, 2),
-			'tax' => (float)round($totalTax, 2),
-			'shipping' => (float)round($baseOrder->total_shipping_tax_incl, 2),
+			'tax' => (float)round((float)$totalTax, 2),
+			'shipping' => (float)round((float)$baseOrder->total_shipping_tax_incl, 2),
 			'items' => [],
 			'user_data' => [
 				'first_name' => $orderCustomer['firstname'],

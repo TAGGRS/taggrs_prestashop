@@ -40,11 +40,11 @@ class FormController
         // Base form info
         $fieldsForm[0]['form'] = [
             'legend' => [
-                'title' => Context::getContext()->getTranslator()->trans('Instellingen', [], 'Modules.Ws_Taggrs.Admin'),
+                'title' => Context::getContext()->getTranslator()->trans('Instellingen', [], 'Modules.Taggrs_Prestashop.Admin'),
             ],
             'input' => [],
             'submit' => [
-                'title' => Context::getContext()->getTranslator()->trans('Opslaan', [], 'Modules.Ws_Taggrs.Admin'),
+                'title' => Context::getContext()->getTranslator()->trans('Opslaan', [], 'Modules.Taggrs_Prestashop.Admin'),
                 'class' => 'btn btn-default pull-right'
             ]
        	];	
@@ -87,13 +87,13 @@ class FormController
         $helper->submit_action = 'submitWSForm';
         $helper->toolbar_btn = [
             'save' => [
-                'desc' => Context::getContext()->getTranslator()->trans('Opslaan', [], 'Modules.Ws_Taggrs.Admin'),
+                'desc' => Context::getContext()->getTranslator()->trans('Opslaan', [], 'Modules.Taggrs_Prestashop.Admin'),
                 'href' => AdminController::$currentIndex.'&configure='.$this->module->name.'&save'.$this->module->name.
                 '&token='.Tools::getAdminTokenLite('AdminModules'),
             ],
             'back' => [
                 'href' => AdminController::$currentIndex.'&token='.Tools::getAdminTokenLite('AdminModules'),
-                'desc' => Context::getContext()->getTranslator()->trans('Terug', [], 'Modules.Ws_Taggrs.Admin')
+                'desc' => Context::getContext()->getTranslator()->trans('Terug', [], 'Modules.Taggrs_Prestashop.Admin')
             ]
         ];
 

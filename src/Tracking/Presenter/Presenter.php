@@ -24,7 +24,7 @@ abstract class Presenter{
 
 	public function present()
 	{
-		if( empty($moduleClass = Module::getInstanceByname('ws_taggrs')) ){
+		if( empty($moduleClass = Module::getInstanceByname('taggrs_prestashop')) ){
 			return '';
 		}
 

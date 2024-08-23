@@ -18,8 +18,8 @@ trait FrontHooks
         ]);
 
         $this->context->controller->registerJavascript(
-            'module-ws_taggrs-taggrs_dynamic_events',
-            'modules/ws_taggrs/views/js/taggrs_dynamic_events.js',
+            'module-taggrs-prestashop-_dynamic_events',
+            'modules/taggrs_prestashop/views/js/taggrs_dynamic_events.js',
             [
               'priority' => 200,
               'attributes' => 'async',

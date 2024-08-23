@@ -33,7 +33,7 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
 }
 
-class Ws_Taggrs extends Module
+class Taggrs_PrestaShop extends Module
 {
     use Install;
     use AdminHooks;
@@ -41,7 +41,7 @@ class Ws_Taggrs extends Module
 
 	public function __construct()
     {
-        $this->name = 'ws_taggrs';
+        $this->name = 'taggrs_prestashop';
         $this->version = '1.0.1';
         $this->author = 'Johan van der Klis | De Websmid BV';
         $this->need_instance = 0;

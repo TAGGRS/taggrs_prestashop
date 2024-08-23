@@ -20,11 +20,11 @@ class ProductDataRetriever implements DataRetrieverInterface{
 
 		$rawData = [
 			'currency' => $currency['iso_code'],
-			'value' => (float)round($baseProduct->price_amount, 2),
+			'value' => (float)round((float)$baseProduct->price_amount, 2),
 			'items' => [
 				'item_id' => $baseProduct->id,
 				'item_name' => $baseProduct->name,
-				'price' => (float)round($baseProduct->price_amount, 2),
+				'price' => (float)round((float)$baseProduct->price_amount, 2),
 				'item_category' => $baseProduct->category_name,
 				'item_brand' => $baseProduct->manufacturer_name,
 			]

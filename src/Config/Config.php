@@ -20,12 +20,12 @@ class Config
         self::GTM_CODE => [
         	'type' => 'text',
         	'label' => 'GTM CODE',
-        	'name' => 'GTM_CODE',
+        	'name' => self::GTM_CODE,
         ],
         self::GTM_URL => [
         	'type' => 'text',
         	'label' => 'TAGGRS URL',
-        	'name' => 'GTM_URL',
+        	'name' => self::GTM_URL,
         ]
     ];
 }

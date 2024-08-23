@@ -27,7 +27,7 @@ class CheckoutDataRetriever implements DataRetrieverInterface{
 			$newProduct = [
 				'item_id' => $product->id,
 				'item_name' => $product->name,
-				'price' => (string)round($product->price_amount, 2),
+				'price' => (string)round((float)$product->price_amount, 2),
 				'quantity' => $product->quantity
 			];
 
