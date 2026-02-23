@@ -1,141 +1,106 @@
-$(function() {
-
+$(() => {
 	if (typeof prestashop !== 'undefined') {
+		const baseCartProducts = prestashop.cart.products;
+		const baseCartInfo = {};
 
-		var baseCartProducts = prestashop.cart.products;
-		var baseCartInfo = [];
-		for (let i = 0; i < prestashop.cart.products.length; i++) {
-			let tempId = prestashop.cart.products[i].id_product + '-' + prestashop.cart.products[i].id_product_attribute;
-			baseCartInfo[tempId] = prestashop.cart.products[i].cart_quantity;
-		}
+		// Initialize base cart info
+		baseCartProducts.forEach(product => {
+			const tempId = `${product.id_product}-${product.id_product_attribute}`;
+			baseCartInfo[tempId] = product.cart_quantity;
+		});
 
-		prestashop.on(
-			'updateCart',
-			function (event) {
+		const updateDataLayer = (eventName, currency, value, items) => {
+			window.dataLayer = window.dataLayer || [];
+			dataLayer.push({ ecommerce: null });
+			dataLayer.push({
+				'event': eventName,
+				'ecommerce': {
+					'currency': currency,
+					'value': value,
+					'items': items
+				}
+			});
+		};
 
-		    	if( event.reason.linkAction == "add-to-cart"){
+		const prepareCartItem = (product, quantity) => ({
+			'item_id': product.id,
+			'item_name': product.name,
+			'price': product.price_with_reduction.toFixed(2),
+			'item_category': product.category,
+			'quantity': quantity
+		});
 
-		    		var cartItems = [];
-		    		for (let i = 0; i < event.reason.cart.products.length; i++) {
+		prestashop.on('updateCart', event => {
+			const { linkAction, cart, idProduct, idProductAttribute } = event.reason;
+			const loopTempId = `${idProduct}-${idProductAttribute}`;
+			let cartItems = [];
+			let itemPrice;
+			let eventName;
 
-		    			if( parseInt(event.reason.cart.products[i].id) == parseInt(event.reason.idProduct)
-		    				&& parseInt(event.reason.cart.products[i].id_product_attribute) == parseInt(event.reason.idProductAttribute) ){
+			const product = baseCartProducts.find(
+				p => parseInt(p.id) === parseInt(idProduct) && parseInt(p.id_product_attribute) === parseInt(idProductAttribute)
+			);
 
-		    				let loopTempId = event.reason.idProduct + '-' + event.reason.idProductAttribute;
+			switch (linkAction) {
+				case "add-to-cart": {
+					const product = cart.products.find(
+						p => parseInt(p.id) === parseInt(idProduct) && parseInt(p.id_product_attribute) === parseInt(idProductAttribute)
+					);
 
-		    				if( baseCartInfo[loopTempId] !== undefined ){
-		    					var productQty = event.reason.cart.products[i].quantity - baseCartInfo[loopTempId];
-		    				} else{
-		    					var productQty = event.reason.cart.products[i].quantity;
-		    				}
+					if (product) {
+						const productQty = (baseCartInfo[loopTempId] !== undefined)
+							? product.quantity - baseCartInfo[loopTempId]
+							: product.quantity;
 
-						    var item = {
-						    	'item_id': event.reason.cart.products[i].id,
-						    	'item_name': event.reason.cart.products[i].name,
-						    	'price': event.reason.cart.products[i].price_with_reduction.toFixed(2),
-						    	'item_category': event.reason.cart.products[i].category,
-						    	'quantity': productQty,
-						    };
-
-						    baseCartInfo[loopTempId] = event.reason.cart.products[i].quantity;
-
-						    var itemPrice = event.reason.cart.products[i].price_with_reduction.toFixed(2);
-						    cartItems.push(item);
-					    }
+						cartItems.push(prepareCartItem(product, productQty));
+						itemPrice = product.price_with_reduction.toFixed(2);
+						eventName = 'add_to_cart';
+						baseCartInfo[loopTempId] = product.quantity;
 					}
+					break;
+				}
 
-		    		window.dataLayer = window.dataLayer || [];
-					dataLayer.push({ ecommerce: null });
-					dataLayer.push({
-						'event': 'add_to_cart',
-						'ecommerce': {
-							'currency': currCode,
-							'value': itemPrice,
-							'items': cartItems
-						}
-					});
-		    	} else if( event.reason.linkAction == "delete-from-cart" ){
+				case "delete-from-cart": {
+					const product = baseCartProducts.find(
+						p => parseInt(p.id) === parseInt(idProduct) && parseInt(p.id_product_attribute) === parseInt(idProductAttribute)
+					);
 
-		    		var cartItems = [];
-		    		for (let i = 0; i < baseCartProducts.length; i++) {
-
-		    			if( parseInt(baseCartProducts[i].id) == parseInt(event.reason.idProduct)
-		    				&& parseInt(baseCartProducts[i].id_product_attribute) == parseInt(event.reason.idProductAttribute) ){
-
-		    				let loopTempId = event.reason.idProduct + '-' + event.reason.idProductAttribute;
-						    var item = {
-						    	'item_id': event.reason.idProduct,
-						    	'item_name': baseCartProducts[i].name,
-						    	'price': baseCartProducts[i].price_with_reduction.toFixed(2),
-						    	'item_category': baseCartProducts[i].category,
-						    	'quantity': baseCartProducts[i].quantity,
-						    };
-
-						    var itemPrice = baseCartProducts[i].price_with_reduction.toFixed(2);
-
-						    baseCartProducts[i].quantity = 0;
-						    cartItems.push(item);
-					    }
+					if (product) {
+						cartItems.push(prepareCartItem(product, product.quantity));
+						itemPrice = product.price_with_reduction.toFixed(2);
+						eventName = 'remove_from_cart';
+						product.quantity = 0;
 					}
+					break;
+				}
 
-				    window.dataLayer = window.dataLayer || [];
-					dataLayer.push({ ecommerce: null });
-					dataLayer.push({
-						'event': 'remove_from_cart',
-						'ecommerce': {
-							'currency': currCode,
-							'value': itemPrice,
-							'items': cartItems
-						}
-					});
-		    	} else{
+				default: {
+					const product = baseCartProducts.find(
+						p => parseInt(p.id) === parseInt(event.resp.id_product) && parseInt(p.id_product_attribute) === parseInt(event.resp.id_product_attribute)
+					);
 
-		    		var cartItems = [];
-					let eventName = '';
-					let actionQty = 0;
+					const cartproduct = prestashop.cart.products.find(
+						p => parseInt(p.id) === parseInt(event.resp.id_product) && parseInt(p.id_product_attribute) === parseInt(event.resp.id_product_attribute)
+					);
 
-		    		for (let i = 0; i < baseCartProducts.length; i++) {
+					if( product.quantity < cartproduct.quantity ){
+    					eventName = 'add_to_cart';
+						actionQty = cartproduct.quantity - product.quantity;
+    				} else{
+    					eventName = 'remove_from_cart';
+						actionQty = product.quantity - cartproduct.quantity;
+    				}
 
-		    			if( parseInt(baseCartProducts[i].id) == parseInt(event.reason.id_product)
-		    				&& parseInt(baseCartProducts[i].id_product_attribute) == parseInt(event.reason.id_product_attribute) ){
+    				cartItems.push(prepareCartItem(product, actionQty));
+    				product.quantity = event.resp.quantity;
 
-		    				let loopTempId = event.reason.id_product + '-' + event.reason.id_product_attribute;
+					break;
+				}
+			}
 
-		    				if( event.reason.quantity < baseCartProducts[i].quantity){
-		    					eventName = 'remove_from_cart';
-		    					actionQty = baseCartProducts[i].quantity - event.reason.quantity;
-		    				} else{
-		    					eventName = 'add_to_cart';
-		    					actionQty = event.reason.quantity - baseCartProducts[i].quantity;
-		    				}
-
-						    var item = {
-						    	'item_id': event.reason.id_product,
-						    	'item_name': baseCartProducts[i].name,
-						    	'price': baseCartProducts[i].price_with_reduction.toFixed(2),
-						    	'item_category': baseCartProducts[i].category,
-						    	'quantity': actionQty,
-						    };
-
-						    var itemPrice = event.reason.cart.products[i].price_with_reduction.toFixed(2);
-
-						    baseCartProducts[i].quantity = event.reason.quantity;
-						    cartItems.push(item);
-					    }
-					}
-
-				    window.dataLayer = window.dataLayer || [];
-					dataLayer.push({ ecommerce: null });
-					dataLayer.push({
-						'event': eventName,
-						'ecommerce': {
-							'currency': currCode,
-							'value': itemPrice,
-							'items': cartItems
-						}
-					});
-		    	}
-	    	}
-	  	);
+			if (cartItems.length) {
+				updateDataLayer(eventName, currCode, itemPrice, cartItems);
+			}
+		});
 	}
 });

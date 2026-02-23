@@ -42,7 +42,7 @@ class Taggrs_PrestaShop extends Module
 	public function __construct()
     {
         $this->name = 'taggrs_prestashop';
-        $this->version = '1.0.1';
+        $this->version = '2.1.0';
         $this->author = 'Johan van der Klis | De Websmid BV';
         $this->need_instance = 0;
         $this->bootstrap = true;
